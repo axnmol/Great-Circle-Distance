@@ -5,6 +5,7 @@ from location import Location
 LOC_FILE = "./locations.json"
 PATH_FILE = "./paths.json"
 
+# giving the great circle distance between two geographic locations
 def gcdistance():
     print("\n Enter coordinates of two locations to find great circle distance between them\n")
     lat1 = input(" Enter latitude of first location: ")
@@ -18,7 +19,7 @@ def gcdistance():
     print(" The Great Circle Distance between the given locations is: {} km".format(
         location1.dist_to(location2)))
 
-
+# giving details of location lying within a certain perimeter
 def withinR():
     try:
         r = float(input("\n Enter the covering radius R(km): "))
@@ -37,17 +38,20 @@ def withinR():
             print(" Id: {}\tLatitude: {}\tLongitude: {}\tDistance: {} km".format(
                 record["id"], record["latitude"], record["longitude"], mockloc.dist_to(loc)))
 
+# providing shortest path using djistra's algorithm implemented in graph.py
 def shortestpath():
     try:
         src = int(input("\n Enter source location id: "))
         des = int(input(" Enter destination location id: "))
     except ValueError:
         raise ValueError("That's not a Int!")
-    
-    graph.distance(src-1,des-1)
+
+    graph.distance(src-1, des-1)
+
 
 if __name__ == "__main__":
 
+# menu driven program to perform the functionalities
     while True:
         print("\n----------------------------------------------------------")
         print(" 1. Calculate Great Circle Distance between two positions")

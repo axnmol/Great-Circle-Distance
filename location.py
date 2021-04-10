@@ -2,6 +2,7 @@ import math
 
 EARTH_RADIUS = 6371.009  # km
 
+
 class Location:
 
     def __init__(self, lat, lon):
@@ -14,6 +15,7 @@ class Location:
         self.lat = float(lat)
         self.lon = float(lon)
 
+# method to retrieve coordinated from records
     @classmethod
     def from_record(cls, data):
         try:
@@ -22,7 +24,8 @@ class Location:
             raise ValueError("Required fields: latitude, longitude")
         return obj
 
-    class PointRad:
+# locationrad class supervising coordinates to radians conversion
+    class Locationrad:
         def __init__(self, lat, lon):
             self.lat = lat
             self.lon = lon
@@ -32,21 +35,24 @@ class Location:
             return cls(math.radians(lat), math.radians(lon))
 
         def __sub__(self, other):
-            if isinstance(other, Location.PointRad):
-                return Location.PointRad(self.lat - other.lat, self.lon - other.lon)
+            if isinstance(other, Location.Locationrad):
+                return Location.Locationrad(self.lat - other.lat, self.lon - other.lon)
             else:
                 raise NotImplementedError
 
     @property
     def radians(self):
-        return Location.PointRad.from_decimal(self.lat, self.lon)
+        return Location.Locationrad.from_decimal(self.lat, self.lon)
 
+# getting distance by applying haversine formula
     def dist_to(self, other, radius=EARTH_RADIUS):
         diff = self.radians - other.radians
         A = math.sin(abs(diff.lat) / 2) ** 2
-        B = math.cos(self.radians.lat) * math.cos(other.radians.lat) * math.sin(abs(diff.lon) / 2) ** 2
+        B = math.cos(self.radians.lat) * math.cos(other.radians.lat) * \
+            math.sin(abs(diff.lon) / 2) ** 2
         haversine = 2 * math.asin(math.sqrt(A + B))
         return radius * haversine
 
+# function telling if location is inside the perimeter radius or not
     def within_dist(self, other: "Location", max_dist: float):
         return self.dist_to(other) <= max_dist

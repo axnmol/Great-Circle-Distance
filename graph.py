@@ -2,15 +2,16 @@ import sys
 import reader
 from location import Location
 
+# infinity equivalent
 infi = sys.maxsize
 
-
+# pair class used for storing storing the connected node and distance
 class Pair:
     def __init__(self, first, second):
         self.first = first
         self.second = second
 
-
+# node class used for implementing adjacency list 
 class Node:
     def __init__(self, vertexNumber):
         self.vertexNumber = vertexNumber
@@ -20,7 +21,7 @@ class Node:
         p = Pair(vNumber, length)
         self.children.append(p)
 
-
+# Djistra's Algorithm
 def dijkstraDist(g, s, path):
 
     dist = [infi for i in range(len(g))]
@@ -63,7 +64,7 @@ def dijkstraDist(g, s, path):
         current = index
     return dist
 
-
+# printing the shortest path from source to destination
 def printPath(path, i, s):
     if (i != s):
         if (path[i] == -1):
@@ -77,11 +78,13 @@ def distance(src, des):
     maxid = 0
     records = {}
 
+# retrieving record of locations and storing the biggest location id
     for record in reader.readloc("./locations.json"):
         if int(record["id"]) > maxid:
             maxid = int(record["id"])
         records[record["id"]] = Location.from_record(record)
 
+# if the source and destnation location ids are not present in the records
     if(src+1 not in records.keys() or des+1 not in records.keys()):
         print(" Error: Enter location id doesn't exist ")
         return
@@ -91,11 +94,14 @@ def distance(src, des):
         a = Node(i)
         v.append(a)
 
+# for each path gcd is calculated and stored for comparison
     for path in reader.readpaths("./paths.json"):
         v[path["start"]-1].Add_child(path["end"]-1,
                                      records[path["start"]].dist_to(records[path["end"]]))
 
     path = [0 for i in range(len(v))]
+
+# this list contains the shortest paths from source to each node
     dist = dijkstraDist(v, src, path)
 
     if (dist[des] == infi):
